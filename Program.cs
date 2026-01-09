@@ -12,7 +12,7 @@ builder.Services.AddControllers();
 
 var databaseUrl = builder.Configuration["DATABASE_URL"];
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(databaseUrl));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddCors(options =>
 {
