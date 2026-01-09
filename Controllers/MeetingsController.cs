@@ -12,19 +12,26 @@ namespace ProjectMeet.Controllers
     [ApiController]
     [Route("api/[controller]")]
     public class MeetingsController : ControllerBase
-            [Authorize]
-            [HttpDelete("{id}")]
-            public async Task<IActionResult> DeleteMeeting(int id)
-            {
-                var meeting = await _context.Meetings.FindAsync(id);
-                if (meeting == null)
-                    return NotFound();
-
-                _context.Meetings.Remove(meeting);
-                await _context.SaveChangesAsync();
-                return NoContent();
-            }
     {
+        private readonly AppDbContext _context;
+
+        public MeetingsController(AppDbContext context)
+        {
+            _context = context;
+        }
+
+        [Authorize]
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteMeeting(int id)
+        {
+            var meeting = await _context.Meetings.FindAsync(id);
+            if (meeting == null)
+                return NotFound();
+
+            _context.Meetings.Remove(meeting);
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
         private readonly AppDbContext _context;
 
         public MeetingsController(AppDbContext context)
@@ -84,17 +91,16 @@ namespace ProjectMeet.Controllers
             try
             {
                 await _context.Database.ExecuteSqlRawAsync(
-            "SELECT public.signup_for_meeting(CAST({0} AS INT), CAST({1} AS INT))",
-            dto.UserId, dto.MeetingId);
+                    "SELECT public.signup_for_meeting(CAST({0} AS INT), CAST({1} AS INT))",
+                    dto.UserId, dto.MeetingId);
 
-
-        return Ok("User signed up successfully");
-    }
-    catch (Exception ex)
-    {
-        return BadRequest(ex.Message);
-    }
-}
+                return Ok("User signed up successfully");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
         [Authorize]
         [HttpGet("users")]
