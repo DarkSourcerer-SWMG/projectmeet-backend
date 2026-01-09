@@ -1,15 +1,4 @@
-        [Authorize]
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteMeeting(int id)
-        {
-            var meeting = await _context.Meetings.FindAsync(id);
-            if (meeting == null)
-                return NotFound();
-
-            _context.Meetings.Remove(meeting);
-            await _context.SaveChangesAsync();
-            return NoContent();
-        }
+    // ...existing code...
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProjectMeet.Data;
