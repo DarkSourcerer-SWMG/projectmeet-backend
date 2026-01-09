@@ -34,6 +34,7 @@ namespace ProjectMeet.Controllers
         [HttpPost("register")]
 public async Task<IActionResult> Register(RegisterDto dto)
 {
+    Console.WriteLine($"[REGISTER] Received: {System.Text.Json.JsonSerializer.Serialize(dto)}");
     if (await _context.Users.AnyAsync(u => u.Email == dto.Email))
         return BadRequest(new { message = "Email already registered" });
 
@@ -48,6 +49,7 @@ public async Task<IActionResult> Register(RegisterDto dto)
     _context.Users.Add(user);
     await _context.SaveChangesAsync();
 
+    Console.WriteLine($"[REGISTER] Created user: {user.Email}");
     return Ok(new { message = "User created" });
 }
 
