@@ -12,6 +12,18 @@ namespace ProjectMeet.Controllers
     [ApiController]
     [Route("api/[controller]")]
     public class MeetingsController : ControllerBase
+            [Authorize]
+            [HttpDelete("{id}")]
+            public async Task<IActionResult> DeleteMeeting(int id)
+            {
+                var meeting = await _context.Meetings.FindAsync(id);
+                if (meeting == null)
+                    return NotFound();
+
+                _context.Meetings.Remove(meeting);
+                await _context.SaveChangesAsync();
+                return NoContent();
+            }
     {
         private readonly AppDbContext _context;
 
