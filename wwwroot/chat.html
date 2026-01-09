@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Chat</title>
+  </head>
+  <body>
+    <h2>Chat Projektowy</h2>
+
+    <div
+      id="chat"
+      style="
+        height: 300px;
+        overflow-y: auto;
+        border: 1px solid #ccc;
+        padding: 10px;
+      "
+    ></div>
+    <br />
+    <input
+      id="msg"
+      type="text"
+      placeholder="Napisz wiadomość..."
+      style="width: 70%"
+    />
+    <button id="sendBtn">Wyślij</button>
+
+    <!-- CDN SignalR -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+
+    <script>
+      const connection = new signalR.HubConnectionBuilder()
+        .withUrl("http://localhost:5213/chathub")
+        .build();
+
+      let meetingId = 1;
+      let userId = 1;
+
+      connection.on("ReceiveMessage", (user, message, time) => {
+        chat.innerHTML += `<p><b>${user}:</b> ${message} <span style='color:gray;font-size:12px'>(${time})</span></p>`;
+      });
+
+      connection.on("ReceiveHistory", (msgs) => {
+        msgs.forEach(
+          (m) =>
+            (chat.innerHTML += `<p><b>${m.name}:</b> ${m.message} <span style='color:gray'>(${m.sentAt})</span></p>`)
+        );
+      });
+
+      connection
+        .start()
+        .then(() => {
+          console.log("Połączono z hubem");
+          connection.invoke("JoinRoom", meetingId);
+
+          document.getElementById("sendBtn").onclick = () => {
+            let msg = document.getElementById("msg").value;
+            if (msg.trim())
+              connection.invoke("SendMessage", meetingId, userId, msg);
+            msg.value = "";
+          };
+        })
+        .catch((err) => console.error(err));
+    </script>
+  </body>
+</html>
