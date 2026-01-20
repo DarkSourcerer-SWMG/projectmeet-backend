@@ -108,29 +108,41 @@ namespace ProjectMeet.Controllers
         }
 
         [Authorize]
-        [HttpPost("addParticipant")]
-        public async Task<IActionResult> AddParticipant([FromBody] AddParticipantDto dto)
-        {
-            try
-            {
-                if (string.IsNullOrWhiteSpace(dto.Email))
-                    return BadRequest("Email is required");
+[HttpPost("addParticipant")]
+public async Task<IActionResult> AddParticipant([FromBody] AddParticipantDto dto)
+{
+    if (string.IsNullOrWhiteSpace(dto.Email))
+        return BadRequest("Email is required");
 
-                var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == dto.Email);
-                if (user == null)
-                    return NotFound("User not found");
+    var user = await _context.Users
+        .FirstOrDefaultAsync(u => u.Email == dto.Email);
 
-                await _context.Database.ExecuteSqlRawAsync(
-                    "SELECT public.signup_for_meeting(CAST({0} AS INT), CAST({1} AS INT))",
-                    user.Id, dto.MeetingId);
+    if (user == null)
+        return NotFound("User not found");
 
-                return Ok(new { message = "Participant added" });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
+    var meetingExists = await _context.Meetings
+        .AnyAsync(m => m.Id == dto.MeetingId);
+
+    if (!meetingExists)
+        return NotFound("Meeting not found");
+
+    var alreadyJoined = await _context.UserMeetings.AnyAsync(um =>
+        um.UserId == user.Id &&
+        um.MeetingId == dto.MeetingId);
+
+    if (alreadyJoined)
+        return BadRequest("User already joined this meeting");
+
+    _context.UserMeetings.Add(new UserMeeting
+    {
+        UserId = user.Id,
+        MeetingId = dto.MeetingId
+    });
+
+    await _context.SaveChangesAsync();
+
+    return Ok(new { message = "Participant added" });
+}
 
 
     }
