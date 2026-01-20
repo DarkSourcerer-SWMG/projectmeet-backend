@@ -109,7 +109,7 @@ namespace ProjectMeet.Controllers
 
         [Authorize]
         [HttpPost("addParticipant")]
-        public async Task<IActionResult> AddParticipant(AddParticipantDto dto)
+        public async Task<IActionResult> AddParticipant([FromBody] AddParticipantDto dto)
         {
             try
             {
