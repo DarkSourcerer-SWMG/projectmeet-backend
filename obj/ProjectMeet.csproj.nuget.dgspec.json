@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Barto\\Desktop\\semestr 5\\.net\\ProjectMeet\\backend\\ProjectMeet.csproj": {}
+    "C:\\Users\\Barto\\Desktop\\semestr 5\\.net\\ProjectMeet\\projectmeet-backend\\ProjectMeet.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Barto\\Desktop\\semestr 5\\.net\\ProjectMeet\\backend\\ProjectMeet.csproj": {
+    "C:\\Users\\Barto\\Desktop\\semestr 5\\.net\\ProjectMeet\\projectmeet-backend\\ProjectMeet.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Barto\\Desktop\\semestr 5\\.net\\ProjectMeet\\backend\\ProjectMeet.csproj",
+        "projectUniqueName": "C:\\Users\\Barto\\Desktop\\semestr 5\\.net\\ProjectMeet\\projectmeet-backend\\ProjectMeet.csproj",
         "projectName": "ProjectMeet",
-        "projectPath": "C:\\Users\\Barto\\Desktop\\semestr 5\\.net\\ProjectMeet\\backend\\ProjectMeet.csproj",
+        "projectPath": "C:\\Users\\Barto\\Desktop\\semestr 5\\.net\\ProjectMeet\\projectmeet-backend\\ProjectMeet.csproj",
         "packagesPath": "C:\\Users\\Barto\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Barto\\Desktop\\semestr 5\\.net\\ProjectMeet\\backend\\obj\\",
+        "outputPath": "C:\\Users\\Barto\\Desktop\\semestr 5\\.net\\ProjectMeet\\projectmeet-backend\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -68,6 +68,10 @@
               "target": "Package",
               "version": "[1.2.0, )"
             },
+            "Microsoft.Data.SqlClient": {
+              "target": "Package",
+              "version": "[6.1.4, )"
+            },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
               "version": "[10.0.1, )"
@@ -114,7 +118,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.101/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.102/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.AspNetCore": "(,10.0.32767]",
             "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",

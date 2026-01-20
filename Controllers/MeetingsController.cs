@@ -111,38 +111,53 @@ namespace ProjectMeet.Controllers
 [HttpPost("addParticipant")]
 public async Task<IActionResult> AddParticipant([FromBody] AddParticipantDto dto)
 {
-    if (string.IsNullOrWhiteSpace(dto.Email))
-        return BadRequest("Email is required");
+    await using var transaction = await _context.Database.BeginTransactionAsync();
 
-    var user = await _context.Users
-        .FirstOrDefaultAsync(u => u.Email == dto.Email);
-
-    if (user == null)
-        return NotFound("User not found");
-
-    var meetingExists = await _context.Meetings
-        .AnyAsync(m => m.Id == dto.MeetingId);
-
-    if (!meetingExists)
-        return NotFound("Meeting not found");
-
-    var alreadyJoined = await _context.UserMeetings.AnyAsync(um =>
-        um.UserId == user.Id &&
-        um.MeetingId == dto.MeetingId);
-
-    if (alreadyJoined)
-        return BadRequest("User already joined this meeting");
-
-    _context.UserMeetings.Add(new UserMeeting
+    try
     {
-        UserId = user.Id,
-        MeetingId = dto.MeetingId
-        SignUpDate = DateTime.UtcNow
-    });
+        var user = await _context.Users
+            .FirstOrDefaultAsync(u => u.Email == dto.Email);
 
-    await _context.SaveChangesAsync();
+        if (user == null)
+            return NotFound("User not found");
 
-    return Ok(new { message = "Participant added" });
+        var meeting = await _context.Meetings
+            .FirstOrDefaultAsync(m => m.Id == dto.MeetingId);
+
+        if (meeting == null)
+            return NotFound("Meeting not found");
+
+        var alreadyJoined = await _context.UserMeetings.AnyAsync(um =>
+            um.UserId == user.Id &&
+            um.MeetingId == meeting.Id);
+
+        if (alreadyJoined)
+            return BadRequest("User already joined this meeting");
+
+        var currentCount = await _context.UserMeetings
+            .CountAsync(um => um.MeetingId == meeting.Id);
+
+        if (currentCount >= meeting.MaxParticipants)
+            return BadRequest("Meeting is full");
+
+        _context.UserMeetings.Add(new UserMeeting
+        {
+            UserId = user.Id,
+            MeetingId = meeting.Id,
+            SignUpDate = DateTime.UtcNow
+        });
+
+        await _context.SaveChangesAsync();
+
+        await transaction.CommitAsync();
+
+        return Ok(new { message = "Participant added" });
+    }
+    catch (Exception ex)
+    {
+        await transaction.RollbackAsync();
+        return BadRequest(ex.Message);
+    }
 }
 
 
