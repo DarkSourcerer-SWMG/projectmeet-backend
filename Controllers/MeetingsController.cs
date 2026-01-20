@@ -137,6 +137,7 @@ public async Task<IActionResult> AddParticipant([FromBody] AddParticipantDto dto
     {
         UserId = user.Id,
         MeetingId = dto.MeetingId
+        SignUpDate = DateTime.UtcNow
     });
 
     await _context.SaveChangesAsync();
